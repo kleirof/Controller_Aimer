@@ -2,7 +2,6 @@
 using HarmonyLib;
 using MonoMod.Cil;
 using Mono.Cecil.Cil;
-using static MonoMod.Cil.RuntimeILReferenceBag.FastDelegateInvokers;
 using System;
 using System.Reflection;
 
@@ -37,6 +36,9 @@ namespace ControllerAimer
 
             private static float PreMoveProjectileModifierPatchCall(float target, GuidedBulletsPassiveItem self, Projectile p, BraveInput instanceForPlayer, Vector2 vector)
             {
+                if (!AimerModule.gunfig.Enabled(AimerModule.remoteBulletsFixStr))
+                    return target;
+
                 if (!(instanceForPlayer.IsKeyboardAndMouse(false)
                             || instanceForPlayer.ActiveActions == null)
                             && vector == Vector2.zero)
@@ -75,6 +77,9 @@ namespace ControllerAimer
 
             private static float MovePatchCall(float target, InputGuidedProjectile self, BraveInput instanceForPlayer, Vector2 vector)
             {
+                if (!AimerModule.gunfig.Enabled(AimerModule.remoteBulletsFixStr))
+                    return target;
+
                 if (!(instanceForPlayer.IsKeyboardAndMouse(false)
                         || instanceForPlayer.ActiveActions == null)
                         && vector == Vector2.zero)
@@ -90,6 +95,24 @@ namespace ControllerAimer
                 }
                 else
                     return target;
+            }
+        }
+
+        [HarmonyPatch(typeof(AutoAimTarget), nameof(AutoAimTarget.IsValid), MethodType.Getter)]
+        public class AutoAimTargetIsValidPatch
+        {
+            [HarmonyPrefix]
+            public static bool AutoAimTargetIsValidPrefix(AutoAimTarget __instance, ref bool __result)
+            {
+                if (!AimerModule.gunfig.Enabled(AimerModule.noAimingBarrelsStr))
+                    return true;
+
+                if (!__instance || __instance.specRigidbody.CanBeCarried)
+                {
+                    __result = false;
+                    return false;
+                }
+                return true;
             }
         }
     }
