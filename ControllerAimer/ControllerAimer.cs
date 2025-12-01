@@ -12,7 +12,7 @@ namespace ControllerAimer
     {
         public const string GUID = "kleirof.etg.controlleraimer";
         public const string NAME = "Controller Aimer";
-        public const string VERSION = "1.2.0";
+        public const string VERSION = "1.2.1";
         public const string TEXT_COLOR = "#FF7F50";
 
         internal static Gunfig gunfig = null;

@@ -107,7 +107,13 @@ namespace ControllerAimer
                 if (!AimerModule.gunfig.Enabled(AimerModule.noAimingBarrelsStr))
                     return true;
 
-                if (!__instance || __instance.specRigidbody.CanBeCarried)
+                if (__instance != null)
+                {
+                    __result = false;
+                    return false;
+                }
+
+                if (__instance.specRigidbody != null && __instance.specRigidbody.CanBeCarried)
                 {
                     __result = false;
                     return false;
